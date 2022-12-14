@@ -6,6 +6,7 @@ import com.example.jwt_restAPI.app.member.service.MemberService;
 import com.example.jwt_restAPI.uti.Util;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/member")
 @RequiredArgsConstructor
+@Slf4j
 public class MemberController {
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
@@ -38,9 +40,19 @@ public class MemberController {
             return Util.spring.responseEntityOf(RsData.of("F-3", "비밀번호가 일치하지 않습니다."));
         }
 
+        log.debug("Util.json.toStr(member.getAccessTokenClaims()) : " + Util.json.toStr(member.getAccessTokenClaims()));
+
+        String accessToken = memberService.genAccessToken(member);
+
         return Util.spring.responseEntityOf(
-                RsData.of("S-1", "로그인 성공, Access Token을 발급합니다."),
-                Util.spring.httpHeadersOf("Authentication", "JWT_Access_Token")
+                RsData.of(
+                        "S-1",
+                        "로그인 성공, Access Token을 발급합니다.",
+                        Util.mapOf(
+                                "accessToken", accessToken
+                        )
+                ),
+                Util.spring.httpHeadersOf("Authentication", accessToken)
         );
     }
 

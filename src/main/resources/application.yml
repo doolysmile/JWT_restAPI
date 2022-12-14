@@ -6,3 +6,6 @@ spring:
 logging:
   level:
     com.example.jwt_restAPI: debug
+custom:
+  jwt:
+    secretKey: secretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKey
